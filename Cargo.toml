@@ -1,0 +1,9 @@
+[package]
+name = "asset-pipeline"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+grass = "0.13"
+lightningcss = "1.0.0-alpha.54"
+rolldown = "0.0.1"

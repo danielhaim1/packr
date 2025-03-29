@@ -1,0 +1,35 @@
+{
+  "name": "packr",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fast asset pipeline built in Rust for processing JavaScript and SCSS",
+  "homepage": "https://github.com/danielhaim1/packr#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielhaim1/packr.git"
+  },
+  "author": "Daniel Haim",
+  "license": "MIT",
+  "keywords": [
+    "rust",
+    "pipeline",
+    "compiler",
+    "scss",
+    "javascript"
+  ],
+"engines": {
+  "node": ">=18"
+},
+  "scripts": {
+    "build": "cargo run -- build",
+    "watch": "cargo run -- watch",
+    "prepare": "cargo build --release"
+  },
+  "dependencies": {
+
+  },
+  "devDependencies": {
+  "esbuild": "^0.20.0"
+}
+
+}
