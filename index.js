@@ -321,7 +321,11 @@ function packr(options = {}) {
 		return new Promise((resolve, reject) => {
 			const packrProcess = spawn(binaryPath, args, {
 				stdio: 'inherit',
-				shell: process.platform === 'win32'
+				shell: process.platform === 'win32',
+				env: {
+					...process.env,
+					NODE_ENV: process.env.NODE_ENV || 'production'
+				}
 			});
 
 			packrProcess.on('close', (code) => {

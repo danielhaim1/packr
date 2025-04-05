@@ -2,7 +2,7 @@
  * Packr - Fast asset pipeline built in Rust for processing JavaScript and SCSS
  */
 
-declare module 'packr' {
+declare module '@danielhaim/packr' {
 	/**
 	 * Configuration options for Packr
 	 */

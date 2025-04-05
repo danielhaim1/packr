@@ -181,7 +181,7 @@ function runTest(test) {
 		
 		// Run Packr
 		console.log(`\nExecuting Packr with config: ${configPath}`);
-		execSync(`${packrBin} build --config ${configPath}`, { 
+		execSync(`${packrBin} build --config ${configPath}`, {
 			stdio: 'inherit',
 			env: {
 				...process.env,

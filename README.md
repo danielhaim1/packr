@@ -1,6 +1,13 @@
 # Packr
-![Build](https://img.shields.io/github/actions/workflow/status/danielhaim1/packr/rust.yml)
-![License](https://img.shields.io/github/license/danielhaim1/packr)
+[![npm version](https://img.shields.io/npm/v/@danielhaim/packr.svg)](https://www.npmjs.com/package/@danielhaim/packr)
+[![npm downloads](https://img.shields.io/npm/dm/@danielhaim/packr.svg)](https://www.npmjs.com/package/@danielhaim/packr)
+[![GitHub stars](https://img.shields.io/github/stars/danielhaim1/packr.svg)](https://github.com/danielhaim1/packr/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/danielhaim1/packr.svg)](https://github.com/danielhaim1/packr/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/danielhaim1/packr.svg)](https://github.com/danielhaim1/packr/pulls)
+[![Node.js version](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org)
+[![Rust version](https://img.shields.io/badge/rust-%3E%3D1.70-orange.svg)](https://www.rust-lang.org)
+[![Build](https://img.shields.io/github/actions/workflow/status/danielhaim1/packr/rust.yml)](https://github.com/danielhaim1/packr/actions)
+[![License](https://img.shields.io/github/license/danielhaim1/packr.svg)](https://github.com/danielhaim1/packr/blob/main/LICENSE)
 
 A fast asset pipeline built in Rust for processing JavaScript and SCSS.
 
@@ -17,20 +24,11 @@ A fast asset pipeline built in Rust for processing JavaScript and SCSS.
 ## Installation
 
 ```bash
-git clone https://github.com/danielhaim1/packr.git
-cd packr
+# Install from npm
+npm install @danielhaim/packr
 
-# Build Rust components
-cargo build
-
-# Install Node.js dependencies
-npm install
-```
-
-Install globally (optional):
-
-```bash
-npm install -g packr
+# Or install globally
+npm install -g @danielhaim/packr
 ```
 
 ---
@@ -42,7 +40,7 @@ Packr can be used via the JavaScript API, a `packr.json` config file, or the CLI
 ### JavaScript API
 
 ```js
-const packr = require('packr');
+const packr = require('@danielhaim/packr');
 
 packr({
   scss_input: 'src/scss/app.scss',
@@ -78,7 +76,7 @@ Create a `.packr.json` in your project root:
 Then run:
 
 ```js
-const packr = require('packr');
+const packr = require('@danielhaim/packr');
 packr(); // Loads from .packr.json
 ```
 
