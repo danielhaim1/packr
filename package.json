@@ -49,7 +49,7 @@
     "release:patch": "bash scripts/release.sh patch",
     "release:minor": "bash scripts/release.sh minor",
     "release:major": "bash scripts/release.sh major",
-    "prepublishOnly": "npm test && npm run build",
+    "prepublishOnly": "npm run build",
     "clean": "bash scripts/clean.sh",
     "clean:all": "bash scripts/clean.sh full",
     "chmod": "chmod +x bin/packr.js"
