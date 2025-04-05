@@ -1,0 +1,13 @@
+{
+  "scss_input": "../assets/scss/app.scss",
+  "scss_output": "dist/app.css",
+  "js_input": "../assets/js/app.js",
+  "js_output": "dist/app.js",
+  "minify": true,
+  "target": "es2020",
+  "verbose": true,
+  "sourcemap": true,
+  "format": "iife",
+  "eslint": true,
+  "eslint_config": ".eslintrc.json"
+}

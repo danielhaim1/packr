@@ -1,0 +1,126 @@
+// Variables
+$primary-color: #FE2712;
+$secondary-color: #FF7700;
+$text-color: #333;
+$spacing-unit: 1rem;
+$border-radius: 4px;
+$transition-speed: 0.3s;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin button-style($bg-color, $text-color: white) {
+  background-color: $bg-color;
+  color: $text-color;
+  padding: $spacing-unit ($spacing-unit * 2);
+  border-radius: $border-radius;
+  transition: all $transition-speed ease-in-out;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: darken($bg-color, 10%);
+  }
+}
+
+// Base styles
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: $text-color;
+  margin: 0;
+  padding: 0;
+}
+
+// Button styles
+.btn {
+  @include button-style($primary-color);
+  font-weight: 500;
+  text-align: center;
+  display: inline-block;
+  text-decoration: none;
+
+  &-primary {
+    @include button-style($primary-color);
+  }
+
+  &-secondary {
+    @include button-style($secondary-color);
+  }
+
+  &-small {
+    padding: ($spacing-unit * 0.5) $spacing-unit;
+    font-size: 0.875rem;
+  }
+
+  &-medium {
+    padding: $spacing-unit ($spacing-unit * 1.5);
+    font-size: 1rem;
+  }
+
+  &-large {
+    padding: ($spacing-unit * 1.5) ($spacing-unit * 2);
+    font-size: 1.125rem;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// Form styles
+.form-group {
+  margin-bottom: $spacing-unit * 2;
+
+  label {
+    display: block;
+    margin-bottom: $spacing-unit * 0.5;
+    font-weight: 500;
+  }
+
+  input {
+    width: 100%;
+    padding: $spacing-unit;
+    border: 1px solid lighten($text-color, 50%);
+    border-radius: $border-radius;
+    transition: border-color $transition-speed ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+
+    &.invalid {
+      border-color: #e74c3c;
+    }
+  }
+}
+
+// Container styles
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-unit * 2;
+
+  .button-container {
+    @include flex-center;
+    gap: $spacing-unit;
+    margin: $spacing-unit * 2 0;
+  }
+}
+
+// Date display styles
+#date {
+  font-size: 1.25rem;
+  color: $primary-color;
+  margin: $spacing-unit 0;
+  font-weight: 500;
+}

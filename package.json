@@ -1,35 +1,76 @@
 {
   "name": "packr",
   "version": "1.0.0",
-  "private": true,
   "description": "Fast asset pipeline built in Rust for processing JavaScript and SCSS",
   "homepage": "https://github.com/danielhaim1/packr#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielhaim1/packr.git"
   },
+  "bugs": {
+    "url": "https://github.com/danielhaim1/packr/issues"
+  },
   "author": "Daniel Haim",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "keywords": [
     "rust",
     "pipeline",
     "compiler",
     "scss",
-    "javascript"
+    "javascript",
+    "asset",
+    "build",
+    "css",
+    "minify",
+    "bundler"
   ],
-"engines": {
-  "node": ">=18"
-},
+  "main": "index.js",
+  "types": "index.d.ts",
+  "bin": {
+    "packr": "./bin/packr.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "build": "cargo run -- build",
-    "watch": "cargo run -- watch",
-    "prepare": "cargo build --release"
+    "build": "bash scripts/build.sh",
+    "prepare": "bash scripts/build.sh && npm run chmod",
+    "postinstall": "node -v | grep -q 'v1[0-7]' && echo 'Warning: Node.js v18+ required' || npm install -g esbuild",
+    "test": "bash scripts/test.sh",
+    "test:env": "bash scripts/test.sh 'Default Packr Configuration'",
+    "test:config": "bash scripts/test.sh 'Custom Config File'",
+    "test:esm": "bash scripts/test.sh 'ESM Format'",
+    "test:sourcemap": "bash scripts/test.sh 'No Sourcemaps'",
+    "test:minify": "bash scripts/test.sh 'Minification'",
+    "test:eslint": "bash scripts/test.sh 'ESLint'",
+    "test:clean": "node __tests__/clean.js",
+    "dev": "node index.js __tests__/packr.json --watch",
+    "release": "bash scripts/release.sh",
+    "release:patch": "bash scripts/release.sh patch",
+    "release:minor": "bash scripts/release.sh minor",
+    "release:major": "bash scripts/release.sh major",
+    "prepublishOnly": "npm test && npm run build",
+    "clean": "bash scripts/clean.sh",
+    "clean:all": "bash scripts/clean.sh full",
+    "chmod": "chmod +x bin/packr.js"
   },
   "dependencies": {
-
+    "esbuild": "0.25.2",
+    "ev-emitter": "^2.1.2"
+  },
+  "files": [
+    "bin/",
+    "index.js",
+    "index.d.ts",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/danielhaim1"
   },
   "devDependencies": {
-  "esbuild": "^0.20.0"
-}
-
+    "eslint": "8.56.0"
+  }
 }
