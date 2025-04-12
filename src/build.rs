@@ -2,15 +2,15 @@
 // * ! Build script for Packr
 // * ! ==================================================
 
-use std::fs;
-use std::process::Command;
-use lightningcss::stylesheet::{ParserOptions, PrinterOptions, StyleSheet};
-use grass;
-use serde_json;
-use std::path::{Path, PathBuf};
 use colored::*;
+use grass;
+use lightningcss::stylesheet::{ParserOptions, PrinterOptions, StyleSheet};
+use serde_json;
 use std::collections::HashMap;
 use std::env;
+use std::fs;
+use std::path::{Path, PathBuf};
+use std::process::Command;
 
 // * Default configuration structure loaded from packr.json
 #[derive(Debug, serde::Deserialize)]
@@ -59,13 +59,18 @@ impl ErrorContext {
     }
 
     fn format(&self) -> String {
-        format!("{}: {}", self.context, 
-            self.details.as_ref().unwrap_or(&"Unknown error".to_string()))
+        format!(
+            "{}: {}",
+            self.context,
+            self.details
+                .as_ref()
+                .unwrap_or(&"Unknown error".to_string())
+        )
     }
 }
 
 // * Helper function to handle errors with context
-fn handle_error<T, E>(result: Result<T, E>, context: &str) -> Result<T, String> 
+fn handle_error<T, E>(result: Result<T, E>, context: &str) -> Result<T, String>
 where
     E: std::fmt::Display,
 {
@@ -78,44 +83,45 @@ pub fn load_config(config_path: &str) -> Result<(Config, PathBuf), String> {
 
     let config_str = handle_error(
         fs::read_to_string(config_path),
-        "Failed to read config file"
+        "Failed to read config file",
     )?;
-    
+
     let mut config: Config = handle_error(
         serde_json::from_str(&config_str),
-        "Failed to parse config file"
+        "Failed to parse config file",
     )?;
 
     // Override config with environment variables if they exist
     if let Ok(val) = env::var("PACKR_MINIFY") {
         config.minify = val == "true";
     }
-    
+
     if let Ok(val) = env::var("PACKR_TARGET") {
         config.target = val;
     }
-    
+
     if let Ok(val) = env::var("PACKR_VERBOSE") {
         config.verbose = val == "true";
     }
-    
+
     if let Ok(val) = env::var("PACKR_SOURCEMAP") {
         config.sourcemap = val == "true";
     }
-    
+
     if let Ok(val) = env::var("PACKR_FORMAT") {
         config.format = val;
     }
-    
+
     if let Ok(val) = env::var("PACKR_ESLINT") {
         config.eslint = val == "true";
     }
-    
+
     if let Ok(val) = env::var("PACKR_ESLINT_CONFIG") {
         config.eslint_config = Some(val);
     }
 
-    let config_dir = Path::new(config_path).parent()
+    let config_dir = Path::new(config_path)
+        .parent()
         .ok_or_else(|| ErrorContext::new("Failed to get config directory").format())?
         .to_path_buf();
 
@@ -163,7 +169,7 @@ impl ESLintSummary {
 
         println!("\nESLint Warning Summary:");
         println!("=====================");
-        
+
         for (file, warnings) in &self.warnings {
             println!("\nFile: {}", file);
             println!("Warnings:");
@@ -172,7 +178,10 @@ impl ESLintSummary {
             }
         }
         println!("\nTotal files with warnings: {}", self.warnings.len());
-        println!("Total warnings: {}", self.warnings.values().map(|w| w.len()).sum::<usize>());
+        println!(
+            "Total warnings: {}",
+            self.warnings.values().map(|w| w.len()).sum::<usize>()
+        );
     }
 }
 
@@ -191,7 +200,7 @@ pub fn build_styles(config: &Config, config_dir: &Path) -> Result<(), String> {
 
     let css = handle_error(
         grass::from_path(&input, &grass::Options::default()),
-        "SCSS compilation failed"
+        "SCSS compilation failed",
     )?;
 
     let mut parser_options = ParserOptions::default();
@@ -199,25 +208,24 @@ pub fn build_styles(config: &Config, config_dir: &Path) -> Result<(), String> {
 
     let sheet = handle_error(
         StyleSheet::parse(&css, parser_options),
-        "CSS parsing failed"
+        "CSS parsing failed",
     )?;
 
     if let Some(parent) = output.parent() {
         handle_error(
             fs::create_dir_all(parent),
-            "Failed to create output directory"
+            "Failed to create output directory",
         )?;
     }
 
     // Generate non-minified version
     let mut printer_options = PrinterOptions::default();
     printer_options.minify = false;
-    let result = sheet.to_css(printer_options)
-        .map_err(|e| {
-            let error_msg = format!("CSS print error: {e}");
-            log_error("Error", &error_msg);
-            error_msg
-        })?;
+    let result = sheet.to_css(printer_options).map_err(|e| {
+        let error_msg = format!("CSS print error: {e}");
+        log_error("Error", &error_msg);
+        error_msg
+    })?;
 
     fs::write(&output, &result.code).map_err(|e| {
         let error_msg = format!("Failed to write CSS: {e}");
@@ -243,17 +251,19 @@ pub fn build_styles(config: &Config, config_dir: &Path) -> Result<(), String> {
         let min_path = output.with_file_name(format!(
             "{}.min{}",
             output.file_stem().unwrap().to_string_lossy(),
-            output.extension().map(|ext| format!(".{}", ext.to_string_lossy())).unwrap_or_default()
+            output
+                .extension()
+                .map(|ext| format!(".{}", ext.to_string_lossy()))
+                .unwrap_or_default()
         ));
 
         let mut printer_options = PrinterOptions::default();
         printer_options.minify = true;
-        let result = sheet.to_css(printer_options)
-            .map_err(|e| {
-                let error_msg = format!("CSS print error: {e}");
-                log_error("Error", &error_msg);
-                error_msg
-            })?;
+        let result = sheet.to_css(printer_options).map_err(|e| {
+            let error_msg = format!("CSS print error: {e}");
+            log_error("Error", &error_msg);
+            error_msg
+        })?;
 
         fs::write(&min_path, &result.code).map_err(|e| {
             let error_msg = format!("Failed to write minified CSS: {e}");
@@ -283,7 +293,10 @@ pub fn build_styles(config: &Config, config_dir: &Path) -> Result<(), String> {
     if config.verbose {
         log_success("CSS", &format!("written to: {}", output.display()));
         if let Some(ref min_path) = min_output {
-            log_success("CSS", &format!("minified version written to: {}", min_path.display()));
+            log_success(
+                "CSS",
+                &format!("minified version written to: {}", min_path.display()),
+            );
         }
     }
 
@@ -292,11 +305,19 @@ pub fn build_styles(config: &Config, config_dir: &Path) -> Result<(), String> {
         let dest_dir = config_dir.join(dest);
         let dest_path = dest_dir.join(Path::new(&config.scss_output).file_name().unwrap());
         let dest_min_path = if config.minify {
-            Some(dest_dir.join(Path::new(&config.scss_output).with_file_name(format!(
-                "{}.min{}",
-                Path::new(&config.scss_output).file_stem().unwrap().to_string_lossy(),
-                Path::new(&config.scss_output).extension().map(|ext| format!(".{}", ext.to_string_lossy())).unwrap_or_default()
-            ))))
+            Some(
+                dest_dir.join(Path::new(&config.scss_output).with_file_name(format!(
+                        "{}.min{}",
+                        Path::new(&config.scss_output)
+                            .file_stem()
+                            .unwrap()
+                            .to_string_lossy(),
+                        Path::new(&config.scss_output)
+                            .extension()
+                            .map(|ext| format!(".{}", ext.to_string_lossy()))
+                            .unwrap_or_default()
+                    ))),
+            )
         } else {
             None
         };
@@ -304,7 +325,7 @@ pub fn build_styles(config: &Config, config_dir: &Path) -> Result<(), String> {
         // Create destination directory
         handle_error(
             fs::create_dir_all(&dest_dir),
-            "Failed to create CSS destination folder"
+            "Failed to create CSS destination folder",
         )?;
 
         // Copy non-minified version
@@ -322,7 +343,7 @@ pub fn build_styles(config: &Config, config_dir: &Path) -> Result<(), String> {
                     if let Some(parent) = min_path.parent() {
                         handle_error(
                             fs::create_dir_all(parent),
-                            "Failed to create minified CSS destination folder"
+                            "Failed to create minified CSS destination folder",
                         )?;
                     }
                     fs::write(min_path, min_content).map_err(|e| {
@@ -345,11 +366,14 @@ pub fn build_styles(config: &Config, config_dir: &Path) -> Result<(), String> {
                 })?;
             }
         }
-        
+
         if config.verbose {
             log_success("CSS", &format!("copied to: {}", dest_path.display()));
             if let Some(ref min_path) = dest_min_path {
-                log_success("CSS", &format!("minified version copied to: {}", min_path.display()));
+                log_success(
+                    "CSS",
+                    &format!("minified version copied to: {}", min_path.display()),
+                );
             }
         }
     }
@@ -359,7 +383,12 @@ pub fn build_styles(config: &Config, config_dir: &Path) -> Result<(), String> {
 }
 
 // * Run ESLint on JavaScript files
-fn run_eslint(config: &Config, config_dir: &Path, input: &Path, summary: &mut ESLintSummary) -> Result<(), String> {
+fn run_eslint(
+    config: &Config,
+    config_dir: &Path,
+    input: &Path,
+    summary: &mut ESLintSummary,
+) -> Result<(), String> {
     if !config.eslint {
         return Ok(());
     }
@@ -383,7 +412,8 @@ fn run_eslint(config: &Config, config_dir: &Path, input: &Path, summary: &mut ES
     })?;
 
     if !eslint_path.starts_with(config_dir) {
-        let error_msg = "ESLint config path points outside the allowed config directory".to_string();
+        let error_msg =
+            "ESLint config path points outside the allowed config directory".to_string();
         log_error("Error", &error_msg);
         return Err(error_msg);
     }
@@ -418,9 +448,12 @@ fn run_eslint(config: &Config, config_dir: &Path, input: &Path, summary: &mut ES
                                 message.get("ruleId").and_then(|r| r.as_str()),
                                 message.get("message").and_then(|m| m.as_str()),
                                 message.get("line").and_then(|l| l.as_i64()),
-                                message.get("column").and_then(|c| c.as_i64())
+                                message.get("column").and_then(|c| c.as_i64()),
                             ) {
-                                let warning = format!("Line {}, Column {}: {} - {}", line, column, rule_id, message);
+                                let warning = format!(
+                                    "Line {}, Column {}: {} - {}",
+                                    line, column, rule_id, message
+                                );
                                 summary.add_warning(file_path.to_string(), warning);
                             }
                         }
@@ -466,7 +499,7 @@ pub fn build_scripts(config: &Config, config_dir: &Path, watch: bool) -> Result<
 
     handle_error(
         run_eslint(config, config_dir, &input, &mut summary),
-        "ESLint check failed"
+        "ESLint check failed",
     )?;
 
     // * Set up esbuild CLI call for non-minified version
@@ -491,7 +524,10 @@ pub fn build_scripts(config: &Config, config_dir: &Path, watch: bool) -> Result<
     }
 
     if config.verbose {
-        log_info("Running", &format!("esbuild with format: {}", config.format));
+        log_info(
+            "Running",
+            &format!("esbuild with format: {}", config.format),
+        );
     }
 
     let status = cmd.status().map_err(|e| {
@@ -510,7 +546,10 @@ pub fn build_scripts(config: &Config, config_dir: &Path, watch: bool) -> Result<
         let min_path = output.with_file_name(format!(
             "{}.min{}",
             output.file_stem().unwrap().to_string_lossy(),
-            output.extension().map(|ext| format!(".{}", ext.to_string_lossy())).unwrap_or_default()
+            output
+                .extension()
+                .map(|ext| format!(".{}", ext.to_string_lossy()))
+                .unwrap_or_default()
         ));
 
         let mut cmd = Command::new("esbuild");
@@ -549,7 +588,10 @@ pub fn build_scripts(config: &Config, config_dir: &Path, watch: bool) -> Result<
     if config.verbose {
         log_success("JavaScript", &format!("written to: {}", output.display()));
         if let Some(ref min_path) = min_output {
-            log_success("JavaScript", &format!("minified version written to: {}", min_path.display()));
+            log_success(
+                "JavaScript",
+                &format!("minified version written to: {}", min_path.display()),
+            );
         }
     }
 
@@ -558,11 +600,19 @@ pub fn build_scripts(config: &Config, config_dir: &Path, watch: bool) -> Result<
         let dest_dir = config_dir.join(dest);
         let dest_path = dest_dir.join(Path::new(&config.js_output).file_name().unwrap());
         let dest_min_path = if config.minify {
-            Some(dest_dir.join(Path::new(&config.js_output).with_file_name(format!(
-                "{}.min{}",
-                Path::new(&config.js_output).file_stem().unwrap().to_string_lossy(),
-                Path::new(&config.js_output).extension().map(|ext| format!(".{}", ext.to_string_lossy())).unwrap_or_default()
-            ))))
+            Some(
+                dest_dir.join(Path::new(&config.js_output).with_file_name(format!(
+                        "{}.min{}",
+                        Path::new(&config.js_output)
+                            .file_stem()
+                            .unwrap()
+                            .to_string_lossy(),
+                        Path::new(&config.js_output)
+                            .extension()
+                            .map(|ext| format!(".{}", ext.to_string_lossy()))
+                            .unwrap_or_default()
+                    ))),
+            )
         } else {
             None
         };
@@ -570,7 +620,7 @@ pub fn build_scripts(config: &Config, config_dir: &Path, watch: bool) -> Result<
         // Create destination directory
         handle_error(
             fs::create_dir_all(&dest_dir),
-            "Failed to create JS destination folder"
+            "Failed to create JS destination folder",
         )?;
 
         // Copy non-minified version
@@ -588,7 +638,7 @@ pub fn build_scripts(config: &Config, config_dir: &Path, watch: bool) -> Result<
                     if let Some(parent) = min_path.parent() {
                         handle_error(
                             fs::create_dir_all(parent),
-                            "Failed to create minified JS destination folder"
+                            "Failed to create minified JS destination folder",
                         )?;
                     }
                     fs::write(min_path, min_content).map_err(|e| {
@@ -611,11 +661,14 @@ pub fn build_scripts(config: &Config, config_dir: &Path, watch: bool) -> Result<
                 })?;
             }
         }
-        
+
         if config.verbose {
             log_success("JS", &format!("copied to: {}", dest_path.display()));
             if let Some(ref min_path) = dest_min_path {
-                log_success("JS", &format!("minified version copied to: {}", min_path.display()));
+                log_success(
+                    "JS",
+                    &format!("minified version copied to: {}", min_path.display()),
+                );
             }
         }
     }

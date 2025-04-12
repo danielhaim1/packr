@@ -55,5 +55,8 @@ fn main() {
     }
 
     // * Build complete message
-    println!("\u{2705} Build ({}) complete.", if watch_mode { "watch" } else { "single" });
+    println!(
+        "\u{2705} Build ({}) complete.",
+        if watch_mode { "watch" } else { "single" }
+    );
 }
