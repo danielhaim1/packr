@@ -1,9 +1,6 @@
 # Packr
-[![npm version](https://img.shields.io/npm/v/@danielhaim/packr.svg)](https://www.npmjs.com/package/@danielhaim/packr)
 [![npm downloads](https://img.shields.io/npm/dm/@danielhaim/packr.svg)](https://www.npmjs.com/package/@danielhaim/packr)
-[![GitHub stars](https://img.shields.io/github/stars/danielhaim1/packr.svg)](https://github.com/danielhaim1/packr/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/danielhaim1/packr.svg)](https://github.com/danielhaim1/packr/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/danielhaim1/packr.svg)](https://github.com/danielhaim1/packr/pulls)
 [![Node.js version](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org)
 [![Rust version](https://img.shields.io/badge/rust-%3E%3D1.70-orange.svg)](https://www.rust-lang.org)
 [![Build](https://img.shields.io/github/actions/workflow/status/danielhaim1/packr/rust.yml)](https://github.com/danielhaim1/packr/actions)
