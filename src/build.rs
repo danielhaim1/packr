@@ -4,7 +4,6 @@
 
 use colored::*;
 use lightningcss::stylesheet::{ParserOptions, PrinterOptions, StyleSheet};
-use serde_json;
 use std::collections::HashMap;
 use std::env;
 use std::fs;
