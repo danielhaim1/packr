@@ -1,6 +1,6 @@
 {
   "name": "@danielhaim/packr",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Fast asset pipeline built in Rust for processing JavaScript and SCSS",
   "homepage": "https://github.com/danielhaim1/packr#readme",
   "repository": {
