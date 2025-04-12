@@ -17,12 +17,10 @@ fn main() {
     let mut config_path = ".packr.json";
     let mut i = 1;
     while i < args.len() {
-        if args[i].as_str() == "--config" {
-            if i + 1 < args.len() {
-                config_path = &args[i + 1];
-                i += 2;
-                continue;
-            }
+        if args[i].as_str() == "--config" && i + 1 < args.len() {
+            config_path = &args[i + 1];
+            i += 2;
+            continue;
         }
         i += 1;
     }
