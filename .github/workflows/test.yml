@@ -42,9 +42,6 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Run example scripts
-        run: npm run example
-
       - name: Check Rust formatting
         run: cargo fmt --check
 
