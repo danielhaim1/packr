@@ -203,8 +203,10 @@ pub fn build_styles(config: &Config, config_dir: &Path) -> Result<(), String> {
         "SCSS compilation failed",
     )?;
 
-    let mut parser_options = ParserOptions::default();
-    parser_options.filename = input.to_string_lossy().to_string();
+    let parser_options = ParserOptions {
+        filename: input.to_string_lossy().to_string(),
+        ..Default::default()
+    };
 
     let sheet = handle_error(
         StyleSheet::parse(&css, parser_options),
@@ -219,8 +221,10 @@ pub fn build_styles(config: &Config, config_dir: &Path) -> Result<(), String> {
     }
 
     // Generate non-minified version
-    let mut printer_options = PrinterOptions::default();
-    printer_options.minify = false;
+    let printer_options = PrinterOptions {
+        minify: false,
+        ..Default::default()
+    };
     let result = sheet.to_css(printer_options).map_err(|e| {
         let error_msg = format!("CSS print error: {e}");
         log_error("Error", &error_msg);
@@ -257,8 +261,10 @@ pub fn build_styles(config: &Config, config_dir: &Path) -> Result<(), String> {
                 .unwrap_or_default()
         ));
 
-        let mut printer_options = PrinterOptions::default();
-        printer_options.minify = true;
+        let printer_options = PrinterOptions {
+            minify: true,
+            ..Default::default()
+        };
         let result = sheet.to_css(printer_options).map_err(|e| {
             let error_msg = format!("CSS print error: {e}");
             log_error("Error", &error_msg);
@@ -507,12 +513,12 @@ pub fn build_scripts(config: &Config, config_dir: &Path, watch: bool) -> Result<
 
     cmd.arg(input.as_os_str())
         .arg("--bundle")
-        .arg(&format!("--target={}", config.target))
-        .arg(&format!("--outfile={}", output.display()))
+        .arg(format!("--target={}", config.target))
+        .arg(format!("--outfile={}", output.display()))
         .arg("--legal-comments=none");
 
     // Add format option
-    cmd.arg(&format!("--format={}", config.format));
+    cmd.arg(format!("--format={}", config.format));
 
     // Add source map option
     if config.sourcemap {
@@ -559,10 +565,10 @@ pub fn build_scripts(config: &Config, config_dir: &Path, watch: bool) -> Result<
             .arg("--minify")
             .arg("--minify-syntax")
             .arg("--minify-whitespace")
-            .arg(&format!("--target={}", config.target))
-            .arg(&format!("--outfile={}", min_path.display()))
+            .arg(format!("--target={}", config.target))
+            .arg(format!("--outfile={}", min_path.display()))
             .arg("--legal-comments=none")
-            .arg(&format!("--format={}", config.format));
+            .arg(format!("--format={}", config.format));
 
         if config.sourcemap {
             cmd.arg("--sourcemap");
