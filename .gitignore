@@ -113,7 +113,6 @@ src/js/.node_repl_history
 /dist/
 /build/
 /bin/*
-!/bin/packr.js
 
 # IDE & Editor
 # ------------------------------------------------
