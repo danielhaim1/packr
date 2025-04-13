@@ -1,5 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-__tests__/ linguist-vendored
-scripts/ linguist-vendored
+# Mark folders as vendored to exclude them from Linguist stats
+__tests__/** linguist-vendored
+scripts/** linguist-vendored
