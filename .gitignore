@@ -13,7 +13,6 @@ _*.sh
 *.js_
 *.js.map
 *.map
-.env*
 *.diff
 *.err
 *.log
@@ -129,15 +128,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Environment
-# ------------------------------------------------
-.env
-.env.local
-.env.*.local
-
 # Cache
 # ------------------------------------------------
 .cache/
 .sass-cache/
 *.css.map
 *.js.map
+
+!/__tests/test-packr-env/.env*
