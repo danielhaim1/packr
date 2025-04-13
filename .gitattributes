@@ -2,3 +2,4 @@
 * text=auto
 
 __tests__/ linguist-vendored
+scripts/ linguist-vendored
