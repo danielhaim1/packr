@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
-const os = require('os');
 
 /**
  * Packr - Fast asset pipeline built in Rust for processing JavaScript and SCSS
@@ -24,7 +23,7 @@ const os = require('os');
 
 function isPathInside(childPath, parentPath) {
 	const relative = path.relative(parentPath, childPath);
-	return !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+	return !relative.startsWith('..') && !path.isAbsolute(relative);
 }
 
 const PROJECT_ROOT = process.cwd();
@@ -284,15 +283,24 @@ function packr(options = {}) {
 
 		console.log('Final config with absolute paths:', config);
 
+		// * Normalize outputs
+		const joinOut = (outFile, destDir, baseDir) => {
+			const outAbs = path.resolve(baseDir, outFile);
+			const outBase = path.basename(outAbs);
+			const outDir = destDir ? path.resolve(baseDir, destDir) : path.dirname(outAbs);
+			return path.join(outDir, outBase);
+		};
+
+		const normalized_scss_output = joinOut(config.scss_output, config.css_destination, configDir);
+		const normalized_js_output   = joinOut(config.js_output, config.js_destination, configDir);
+
 		// * Create config file for Rust binary
 		const configPath = path.resolve('.packr-config.json');
 		fs.writeFileSync(configPath, JSON.stringify({
 			scss_input: config.scss_input,
-			scss_output: config.scss_output,
+			scss_output: normalized_scss_output,
 			js_input: config.js_input,
-			js_output: config.js_output,
-			css_destination: config.css_destination,
-			js_destination: config.js_destination,
+			js_output: normalized_js_output,
 			minify: config.minify,
 			minify_js: config.minify_js,
 			minify_css: config.minify_css,
@@ -302,6 +310,7 @@ function packr(options = {}) {
 			sourcemap: config.sourcemap,
 			format: config.format
 		}, null, 2));
+
 
 		// * Get the path to the binary
 		const binaryPath = path.join(__dirname, 'bin', process.platform === 'win32' ? 'packr.exe' : 'packr');
@@ -357,7 +366,11 @@ function watch(options = {}) {
 // * CLI entry
 if (require.main === module) {
 	const args = process.argv.slice(2);
-	let configPath = args[0] || path.join(process.cwd(), '.packr.json');
+	let configPath = args[0] 
+	  || (fs.existsSync(path.join(process.cwd(), 'packr.json'))
+	        ? path.join(process.cwd(), 'packr.json')
+	        : path.join(process.cwd(), '.packr.json'));
+
 	const watchMode = args.includes('--watch');
 
 	if (fs.existsSync(configPath) && fs.statSync(configPath).isDirectory()) {
@@ -370,17 +383,15 @@ if (require.main === module) {
 	}
 
 	try {
-		// Set ROOT_DIR to the directory of the config file
-		ROOT_DIR = path.dirname(path.resolve(configPath));
-		
-		const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-		packr({ ...config, watch: watchMode }).catch((err) => {
-			console.error(err);
-			process.exit(1);
-		});
+	    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+
+	    return packr({ ...config, watch: watchMode }).catch((err) => {
+	        console.error(err);
+	        process.exit(1);
+	    });
 	} catch (err) {
-		console.error(`Error reading config: ${err.message}`);
-		process.exit(1);
+	    console.error(`Error reading config: ${err.message}`);
+	    process.exit(1);
 	}
 }
 
