@@ -50,7 +50,7 @@ packr({
 
 ### Configuration File
 
-Create a `.packr.json` in your project root:
+Create a `packr.json` in your project root:
 
 ```json
 {
@@ -79,7 +79,7 @@ packr(); // Loads from .packr.json
 ### CLI
 
 ```bash
-# Default config (.packr.json)
+# Default config (packr.json or .packr.json)
 packr
 
 # Use a specific config file
