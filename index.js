@@ -285,10 +285,10 @@ function packr(options = {}) {
 
 		// * Normalize outputs
 		const joinOut = (outFile, destDir, baseDir) => {
-			const outAbs = path.resolve(baseDir, outFile);
-			const outBase = path.basename(outAbs);
-			const outDir = destDir ? path.resolve(baseDir, destDir) : path.dirname(outAbs);
-			return path.join(outDir, outBase);
+		  // Always strip directories, keep only the file name
+		  const outBase = path.basename(outFile);
+		  const outDir = destDir ? path.resolve(baseDir, destDir) : path.dirname(path.resolve(baseDir, outFile));
+		  return path.join(outDir, outBase);
 		};
 
 		const normalized_scss_output = joinOut(config.scss_output, config.css_destination, configDir);
