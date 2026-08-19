@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 const ROOT_DIR = path.resolve(__dirname); // Safe boundary for deletion
 
@@ -181,7 +181,7 @@ function runTest(test) {
 		
 		// Run Packr
 		console.log(`\nExecuting Packr with config: ${configPath}`);
-		execSync(`${packrBin} build --config ${configPath}`, {
+		execFileSync(packrBin, ['build', '--config', configPath], {
 			stdio: 'inherit',
 			env: {
 				...process.env,
